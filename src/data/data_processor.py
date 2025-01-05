@@ -5,33 +5,21 @@ def process_data(df: pd.DataFrame, columns_to_impute: list, target_column: str =
     """
     Procesa los datos:
     - Imputa los valores faltantes
-    - Elimina las filas con valores NaN y asegura la correspondencia con la columna objetivo
+    - Escalar las variables numéricas
 
     Args:
        df (pd.DataFrame): DataFrame con los datos a procesar.
-       columns_to_impute (list): Lista de columnas en las que se imputarán valores faltantes.
-       target_column (str): Nombre de la columna objetivo (opcional).
+       columns_to_impute (list): Lista de columnas a imputar los valores faltantes.
+       target_column (str, optional): Nombre de la columna objetivo.
 
     Returns:
-       tuple: (DataFrame procesado, Series con la columna objetivo si se proporciona).
+       pd.DataFrame: DataFrame con los datos procesados.
+       pd.Series: Serie con la variable objetivo.
     """
-    # Reemplazar ceros por NaN en las columnas especificadas
+    # Reemplazar valores 0 por NaN en las columnas a imputar
     df[columns_to_impute] = df[columns_to_impute].replace(0, np.nan)
     
-    # Separar la columna objetivo si se especifica
+    # Extraer la columna objetivo si es proporcionada
     target = df[target_column] if target_column else None
     
-    # Imprimir forma original del DataFrame
-    print(f"Original shape of DataFrame: {df.shape}")
-    
-    # Eliminar filas con valores NaN en el DataFrame
-    df_cleaned = df.dropna()
-    print(f"Shape after dropping NaN: {df_cleaned.shape}")
-    
-    # Si hay una columna objetivo, ajustarla para que coincida con los índices de df_cleaned
-    if target_column:
-        target = target.loc[df_cleaned.index]
-        print(f"Shape of target column after cleaning: {target.shape}")
-    
-    return df_cleaned, target
-
+    return df, target

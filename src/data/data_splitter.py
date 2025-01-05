@@ -1,9 +1,7 @@
 from sklearn.model_selection import train_test_split
 import pandas as pd
 
-def split_data(data:pd.DataFrame,target_column: str, test_size=0.25, 
-               random_state=42,stratify: bool = True,
-               ) -> tuple[pd.DataFrame, pd.DataFrame, pd.Series, pd.Series]:
+def split_data(data: pd.DataFrame, target_column: str, test_size=0.2, random_state=42, stratify: bool = True) -> tuple[pd.DataFrame, pd.DataFrame, pd.Series, pd.Series]:
     """
     Dividir los datos en conjuntos de entrenamiento y prueba
 
@@ -20,15 +18,13 @@ def split_data(data:pd.DataFrame,target_column: str, test_size=0.25,
         - y_train (pd.Series): Conjunto de entrenamiento de la variable objetivo
         - y_test (pd.Series): Conjunto de prueba de la variable objetivo
     """
-    
-    X = data.drop(columns = target_column, axis=1)
+    X = data.drop(columns=target_column, axis=1)
     y = data[target_column]
+    
+    # Dividir el conjunto de datos en entrenamiento y prueba
     if stratify:
         X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=test_size, random_state=random_state, stratify=y)
     else:
         X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=test_size, random_state=random_state)
-    
-    #X_train = X_train.dropna()
-    #y_train = y_train.loc[X_train.index]
     
     return X_train, X_test, y_train, y_test

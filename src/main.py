@@ -10,68 +10,41 @@ from src.model.trainer import train_model
 from src.model.evaluator import evaluate_model
 from src.model.saver import save_model
 
-from sklearn.model_selection import train_test_split
-from sklearn.compose import ColumnTransformer
-from sklearn.preprocessing import StandardScaler, OneHotEncoder
-from sklearn.pipeline import Pipeline
-import xgboost as xgb
-from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score, roc_auc_score
-
 def main():
+    
     # Cargar los datos
-    data = load_data(file_path = "data/raw/diabetes.csv")
+    heart_disease = load_data(file_path = "data/raw/heart_disease.csv")
     
-    # Definir las columnas categóricas y numéricas
-    categorical_features = ['sex', 'cp', 'fbs', 'restecg', 'exang', 'slope', 'thal']
-    numeric_features = ['age', 'trestbps', 'chol', 'thalach', 'oldpeak', 'ca']
-    
-    # Procesar los datos
+    # Preprocesar los datos
     processed_data, target = process_data(
-        df=data, 
-        columns_to_impute=numeric_features + categorical_features,  # Ajuste de columnas a imputar
-        target_column='Outcome'
-    )
-
-    # Dividir los datos en conjunto de entrenamiento y prueba
-    X_train, X_test, y_train, y_test = train_test_split(processed_data, target, test_size=0.2, random_state=42)
-
-    # Crear preprocesador
-    preprocessor = ColumnTransformer(
-        transformers=[
-            ('num', StandardScaler(), numeric_features),
-            ('cat', OneHotEncoder(drop='first'), categorical_features)
-        ]
-    )
-
-    # Crear pipeline con preprocesamiento y modelo XGBoost
-    model = Pipeline([
-        ('preprocessor', preprocessor),
-        ('classifier', xgb.XGBClassifier(
-            objective='binary:logistic',
-            random_state=42,
-        ))
-    ])
+                                  df=heart_disease, 
+                                  columns_to_impute=['trestbps', 'chol', 'thalach', 'oldpeak'],  # columnas que pueden tener NaN
+                                  target_column='num'  # Cambio para coincidir con la columna objetivo del dataset
+                                  )
+    
+    # Dividir los datos en conjuntos de entrenamiento y prueba
+    X_train, X_test, y_train, y_test = split_data(processed_data, target_column='num')
+    
+    # Convertir 'y' en binario
+    y_train_binary = (y_train > 0).astype(int)
+    y_test_binary = (y_test > 0).astype(int)
 
     # Entrenar el modelo
-    model.fit(X_train, y_train)
+    model = train_model(X_train=X_train, y_train=y_train_binary)
 
-    # Realizar predicciones
-    y_pred = model.predict(X_test)
+
 
     # Evaluar el modelo
-    accuracy = accuracy_score(y_test, y_pred)
-    precision = precision_score(y_test, y_pred)
-    recall = recall_score(y_test, y_pred)
-    f1 = f1_score(y_test, y_pred)
-    auc = roc_auc_score(y_test, model.predict_proba(X_test)[:, 1])
+    accuracy, precision, recall, f1, auc = evaluate_model(model, test_data=X_test, y_test=y_test_binary)
 
-    # Mostrar resultados de evaluación
-    print(f"Accuracy: {accuracy}")
-    print(f"Precision: {precision}")
-    print(f"Recall: {recall}")
-    print(f"F1: {f1}")
-    print(f"AUC: {auc}")
+    # Imprimir las métricas
+    print(f"Accuracy: {accuracy:.3f}")
+    print(f"Precision: {precision:.3f}")
+    print(f"Recall: {recall:.3f}")
+    print(f"F1: {f1:.3f}")
+    print(f"AUC: {auc:.3f}")
 
+    
     # Guardar el modelo
     save_model(model, model_path="models/trained_model")
     

@@ -169,5 +169,8 @@ cython_debug/
 
 # PyPI configuration file
 .pypirc
+<<<<<<< HEAD
 
 .codegpt
+=======
+>>>>>>> a22ef9791afde2987e3b803317b39786b7b2e6d8

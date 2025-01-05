@@ -1,5 +1,3 @@
-# poetry_example
-
 XGBOOST Model for Heart Diseaset UCI
 
 

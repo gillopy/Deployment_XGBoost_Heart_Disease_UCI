@@ -42,7 +42,7 @@ All dependencies are listed in `pyproject.toml`. Key libraries include:
 
 1. **Clone the Repository**:
    ```bash
-   git clone 
+   git clone https://github.com/gillopy/deployment_model_xgboost_heart_disease
    cd deployment_demo_model_training
    ```
 

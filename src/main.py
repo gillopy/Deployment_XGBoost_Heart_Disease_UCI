@@ -10,37 +10,62 @@ from src.model.trainer import train_model
 from src.model.evaluator import evaluate_model
 from src.model.saver import save_model
 
+from sklearn.model_selection import train_test_split
+from sklearn.compose import ColumnTransformer
+from sklearn.preprocessing import StandardScaler, OneHotEncoder
+from sklearn.pipeline import Pipeline
+import xgboost as xgb
+from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score, roc_auc_score
+
 def main():
-    
     # Cargar los datos
     data = load_data(file_path = "data/raw/diabetes.csv")
     
-    # Procesar los datos
-    processed_data , target = process_data(
-                                  df=data, 
-                                  columns_to_impute=['BloodPressure', 'SkinThickness', 'BMI','Glucose','Insulin'],
-                                  target_column='Outcome'
-                                  )
-    # qsna=processed_data.shape[0]-processed_data.isnull().sum(axis=0)
-    # qna=processed_data.isnull().sum(axis=0)
-    # ppna=round(100*(processed_data.isnull().sum(axis=0)/processed_data.shape[0]),2)
-    # aux= {'datos sin NAs en q': qsna, 'Na en q': qna ,'Na en %': ppna}
-    # na=pd.DataFrame(data=aux)
-    # print(na.sort_values(by='Na en %',ascending=False).head(20))
+    # Definir las columnas categóricas y numéricas
+    categorical_features = ['sex', 'cp', 'fbs', 'restecg', 'exang', 'slope', 'thal']
+    numeric_features = ['age', 'trestbps', 'chol', 'thalach', 'oldpeak', 'ca']
     
-    # Dividir los datos en conjuntos de entrenamiento y prueba
-    X_train, X_test, y_train, y_test = split_data(processed_data,target_column='Outcome')
-    # print(X_train.shape)
-    # print(y_train.shape)
-    # print(X_test.shape)
-    # print(y_test.shape)
+    # Procesar los datos
+    processed_data, target = process_data(
+        df=data, 
+        columns_to_impute=numeric_features + categorical_features,  # Ajuste de columnas a imputar
+        target_column='Outcome'
+    )
+
+    # Dividir los datos en conjunto de entrenamiento y prueba
+    X_train, X_test, y_train, y_test = train_test_split(processed_data, target, test_size=0.2, random_state=42)
+
+    # Crear preprocesador
+    preprocessor = ColumnTransformer(
+        transformers=[
+            ('num', StandardScaler(), numeric_features),
+            ('cat', OneHotEncoder(drop='first'), categorical_features)
+        ]
+    )
+
+    # Crear pipeline con preprocesamiento y modelo XGBoost
+    model = Pipeline([
+        ('preprocessor', preprocessor),
+        ('classifier', xgb.XGBClassifier(
+            objective='binary:logistic',
+            random_state=42,
+        ))
+    ])
 
     # Entrenar el modelo
-    model = train_model(X_train=X_train, y_train=y_train)
-    # print(type(model))
+    model.fit(X_train, y_train)
+
+    # Realizar predicciones
+    y_pred = model.predict(X_test)
 
     # Evaluar el modelo
-    accuracy, precision, recall, f1, auc = evaluate_model(model, test_data=X_test, y_test=y_test)
+    accuracy = accuracy_score(y_test, y_pred)
+    precision = precision_score(y_test, y_pred)
+    recall = recall_score(y_test, y_pred)
+    f1 = f1_score(y_test, y_pred)
+    auc = roc_auc_score(y_test, model.predict_proba(X_test)[:, 1])
+
+    # Mostrar resultados de evaluación
     print(f"Accuracy: {accuracy}")
     print(f"Precision: {precision}")
     print(f"Recall: {recall}")

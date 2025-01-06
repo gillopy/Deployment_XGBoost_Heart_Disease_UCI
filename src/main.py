@@ -38,11 +38,11 @@ def main():
     accuracy, precision, recall, f1, auc = evaluate_model(model, test_data=X_test, y_test=y_test_binary)
 
     # Imprimir las métricas
-    print(f"Accuracy: {accuracy:.3f}")
-    print(f"Precision: {precision:.3f}")
-    print(f"Recall: {recall:.3f}")
-    print(f"F1: {f1:.3f}")
-    print(f"AUC: {auc:.3f}")
+    print(f"Accuracy: {accuracy:.2f}")
+    print(f"Precision: {precision:.2f}")
+    print(f"Recall: {recall:.2f}")
+    print(f"F1: {f1:.2f}")
+    print(f"AUC: {auc:.2f}")
 
     
     # Guardar el modelo

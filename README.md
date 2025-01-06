@@ -4,7 +4,7 @@ XGBOOST Model for Heart Diseaset UCI
 ## Project Structure
 
 ```python
-deployment_demo_model_training/
+Deployment_XGBoost_Heart_Disease_UCI/
 ├── data/                     # Input data folder (ignored by Git)
 ├── models/                   # Trained models folder (ignored by Git)
 ├── src/                      # Source code
@@ -42,8 +42,8 @@ All dependencies are listed in `pyproject.toml`. Key libraries include:
 
 1. **Clone the Repository**:
    ```bash
-   git clone https://github.com/gillopy/Deployment_XGBoost_Diamonds_Dataset
-   cd deployment_model_xgboost_heart_disease
+   git clone https://github.com/gillopy/Deployment_XGBoost_Heart_Disease_UCI
+   cd Deployment_XGBoost_Heart_Disease_UCI
    ```
 
 2. **Install Dependencies**:

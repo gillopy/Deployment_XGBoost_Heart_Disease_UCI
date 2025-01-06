@@ -1,8 +1,8 @@
 [tool.poetry]
-name = "pima-diabetes-trainer"
+name = "XGBoost for Heart Disease"
 version = "0.1.0"
-description = "\"Pipeline de entrenamiento para Pima diabetes dataset\""
-authors = ["iair <i.linker8@gmail.com>"]
+description = "\"Pipeline de entrenamiento para Heart Disease UCI Dataset\""
+authors = ["Guillermo <guillermocabrera9710@gmail.com>"]
 license = "\"APACHE 2.0\""
 readme = "README.md"
 

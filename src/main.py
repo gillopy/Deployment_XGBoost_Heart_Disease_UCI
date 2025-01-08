@@ -13,7 +13,7 @@ from src.model.saver import save_model
 def main():
     
     # Cargar los datos
-    heart_disease = load_data(file_path = "data/raw/heart_disease.csv")
+    heart_disease = load_data(file_path = "data/raw/heart.csv")
     
     # Preprocesar los datos
     processed_data, target = process_data(

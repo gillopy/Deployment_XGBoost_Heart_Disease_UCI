@@ -5,6 +5,7 @@ description = "\"Pipeline de entrenamiento para Heart Disease UCI Dataset\""
 authors = ["Guillermo <guillermocabrera9710@gmail.com>"]
 license = "\"APACHE 2.0\""
 readme = "README.md"
+package-mode = false
 
 [tool.poetry.dependencies]
 python = "^3.11"
